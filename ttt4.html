@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicTacToe</title>
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        .board {
+            display: grid;
+            gap: 5px;
+            border: 5px solid #000000;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            padding: 5px;
+        }
+
+        .square {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+            border: 2px solid #000000;
+            cursor: pointer;
+        }
+        .square:hover {
+            background-color: #d65555;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .turn {
+            border: 2px solid #000000;
+            background-color: rgb(219, 208, 194);
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .winCondition {
+            border: 2px solid #000000;
+            background-color: rgb(193, 218, 157);
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            padding-left: 30px;
+            padding-right: 30px;
+            z-index: 2px;
+        }
+
+        #restart {
+            margin: 20px;
+            border: 2px solid #000000;
+            padding: 20px;
+            cursor: pointer;
+            transition-duration: 0.4s;
+        }
+
+        #restart:hover {
+            background-color: #74c0df;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>
+            TIC - TAC - TOE
+        </h1>
+    </div>
+
+    <div class="turn">X's Turn</div>
+
+    <div class="winCondition">Begin Game!</div>
+
+    <div class="board">
+
+    <script>
+        const NUM_SQUARES = 9;
+        for (i=0; i<NUM_SQUARES; i++)
+        {
+        id = "sq" + i;
+        document.write( "<div class='square' id='" + id + "'></div>" );
+        }
+
+        const squares = document.querySelectorAll('.square');
+        let currentPlayer = Math.random() < 0.5 ? 'X' : 'O';
+        const turnDisplay = document.querySelector('.turn');
+        const conditionDisplay = document.querySelector('.winCondition')
+
+        let moves = ['-', '-', '-', '-', '-','-','-','-','-'];
+
+        function squareClick(event) {
+            const square = event.target;
+            const squareId = parseInt(square.id.slice(2));
+            const message = squareId;
+
+            if (!square.innerHTML) {
+                square.innerHTML = currentPlayer;
+                // alert("Square index: " + message);
+                moves[squareId] = currentPlayer;
+                CheckWin();
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                turnDisplay.textContent = currentPlayer + "'s Turn";
+                square.removeEventListener('click', squareClick);
+            }
+        }
+
+        squares.forEach(square => square.addEventListener('click', squareClick));
+
+        function CheckWin () {
+            const winConditions = [moves[0] + moves[1] + moves[2],
+                                   moves[3] + moves[4] + moves[5],
+                                   moves[6] + moves[7] + moves[8],
+                                   moves[0] + moves[3] + moves[6],
+                                   moves[1] + moves[4] + moves[7],
+                                   moves[2] + moves[5] + moves[8],
+                                   moves[0] + moves[4] + moves[8],
+                                   moves[2] + moves[4] + moves[6] ];
+
+            let win = false;
+            winConditions.forEach(condition => {
+                if (condition === 'XXX' || condition === 'OOO') {
+                    alert(currentPlayer + " wins!");
+                    conditionDisplay.textContent = currentPlayer + " wins!";
+                    win = true;
+                }
+            });
+
+            if (win) {
+                squares.forEach(square => {
+                square.removeEventListener('click', squareClick);
+                });
+                return;
+            }
+
+            if (!moves.includes('-')) {
+                squares.forEach(square => {
+                    square.removeEventListener('click', squareClick);
+                });
+                alert("Stalemate!");
+                conditionDisplay.textContent = "Stalemate!";
+            }
+            else {
+                conditionDisplay.textContent = "Game in-progress";
+            }
+
+        }
+
+        function startGame() {
+            squares.forEach(square => {
+                square.innerHTML = '';
+                square.addEventListener('click', squareClick);
+            });
+            currentPlayer = Math.random() < 0.5 ? 'X' : 'O';
+            turnDisplay.textContent = currentPlayer + "'s Turn";
+            moves = ['-', '-', '-', '-', '-','-','-','-','-'];
+            conditionDisplay.textContent = "Game in-prorgress";
+        }
+
+    </script>
+    </div>
+
+    <button id='restart' onclick="startGame()">Start Game</button>
+</body>
+</html>
